@@ -34,14 +34,25 @@ public class UserDao {
 
         Connection c = cm.getConnection();
         PreparedStatement ps = c.prepareStatement(
-                "select from users where id=?"
+                "select * from users where id=?"
         );
         ps.setString(1,id);
 
         ResultSet rs = ps.executeQuery();
+        rs.next();
         User user = new User(rs.getString("id"),rs.getString("name"),rs.getString("password"));
 
         return user;
+    }
 
+    public void deleteAll() throws SQLException {
+        Connection c = cm.getConnection();
+        PreparedStatement ps =c.prepareStatement(
+                "DELETE FROM users"
+        );
+        ps.executeUpdate();
+
+        ps.close();
+        c.close();
     }
 }
