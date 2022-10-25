@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,6 +45,7 @@ class UserDaoTest {
         assertThrows(EmptyResultDataAccessException.class, ()-> {
             userDao.get("2");
         });
+        userDao.deleteAll();
     }
 
     @Test
@@ -58,5 +60,17 @@ class UserDaoTest {
 
         userDao.add(user3);
         assertEquals(3,userDao.getCount());
+
+        userDao.deleteAll();
+    }
+
+    @Test
+    void getAll() {
+        userDao.add(user1);
+        userDao.add(user2);
+        userDao.add(user3);
+
+        List<User> users = userDao.getAll();
+        assertEquals(3,users.size());
     }
 }

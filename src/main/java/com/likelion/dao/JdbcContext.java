@@ -1,14 +1,29 @@
 package com.likelion.dao;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class JdbcContext {
     private ConnectionMaker cm;
+    private DataSource dataSource;
 
     public JdbcContext(ConnectionMaker cm) {
         this.cm = cm;
+    }
+
+    public JdbcContext(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public void excuteSql (String sql) {
+        workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement getStatement(Connection c) throws SQLException {
+                return c.prepareStatement(sql);
+            }
+        });
     }
 
     public void workWithStatementStrategy(StatementStrategy st) {
@@ -17,7 +32,7 @@ public class JdbcContext {
 
         try {
 
-            c = cm.getConnection();
+            c = dataSource.getConnection();
             ps = st.getStatement(c);
             ps.executeUpdate();
 
