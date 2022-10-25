@@ -9,26 +9,15 @@ import java.util.Map;
 public class UserDao {
 
     private ConnectionMaker cm;
+    private JdbcContext jdbcContext;
 
     public UserDao(ConnectionMaker cm) {
         this.cm = cm;
+        this.jdbcContext = new JdbcContext(cm);
     }
 
-    public void add(User user) throws SQLException {
-
-        Connection c = cm.getConnection();
-
-        PreparedStatement ps = c.prepareStatement(
-                "insert into users(id, name, password) value(?,?,?)"
-        );
-        ps.setString(1,user.getId());
-        ps.setString(2,user.getName());
-        ps.setString(3,user.getPassword());
-
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+    public void add(User user) {
+        jdbcContext.workWithStatementStrategy(new AddStrategy(user));
     }
 
     public User get(String id) throws SQLException {
@@ -59,15 +48,8 @@ public class UserDao {
         return user;
     }
 
-    public void deleteAll() throws SQLException {
-        Connection c = cm.getConnection();
-        PreparedStatement ps =c.prepareStatement(
-                "DELETE FROM users"
-        );
-        ps.executeUpdate();
-
-        ps.close();
-        c.close();
+    public void deleteAll(){
+        jdbcContext.workWithStatementStrategy(new DeleteAllStrategy());
     }
 
     public int getCount() throws SQLException {
