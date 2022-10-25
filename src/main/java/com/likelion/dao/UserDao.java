@@ -2,10 +2,7 @@ package com.likelion.dao;
 
 import com.likelion.domain.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Map;
 
 public class UserDao {
@@ -31,5 +28,20 @@ public class UserDao {
 
         ps.close();
         c.close();
+    }
+
+    public User get(String id) throws SQLException {
+
+        Connection c = cm.getConnection();
+        PreparedStatement ps = c.prepareStatement(
+                "select from users where id=?"
+        );
+        ps.setString(1,id);
+
+        ResultSet rs = ps.executeQuery();
+        User user = new User(rs.getString("id"),rs.getString("name"),rs.getString("password"));
+
+        return user;
+
     }
 }
