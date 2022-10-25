@@ -1,2 +1,4 @@
-package com.likelion.dao;public class UserDao {
+package com.likelion.dao;
+
+public class UserDao {
 }
