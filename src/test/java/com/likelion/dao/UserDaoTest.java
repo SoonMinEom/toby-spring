@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -37,7 +38,25 @@ class UserDaoTest {
 
     @Test
     void addAndGet() throws SQLException {
+        userDao.add(user1);
+        assertEquals("1111",userDao.get("1").getName());
+
+        assertThrows(EmptyResultDataAccessException.class, ()-> {
+            userDao.get("2");
+        });
+    }
+
+    @Test
+    void getCount() throws SQLException {
+        userDao.getCount();
+
+        userDao.add(user1);
+        assertEquals(1,userDao.getCount());
+
+        userDao.add(user2);
+        assertEquals(2,userDao.getCount());
+
         userDao.add(user3);
-        assertEquals("3333",userDao.get("3").getName());
+        assertEquals(3,userDao.getCount());
     }
 }
